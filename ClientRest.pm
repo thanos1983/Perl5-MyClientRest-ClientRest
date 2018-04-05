@@ -22,8 +22,6 @@ sub new {
     my $class = shift;
     my $self = {
         _host => shift,
-        _port => shift,
-	_ip   => shift,
     };
     _parameterValidation($self);
     # instatiate Rest::Client and create constructor
@@ -37,22 +35,8 @@ sub new {
 
 sub _parameterValidation {
     my( $self ) = @_;
-    use Regexp::Common qw/ net number /;
 
-    # these become available:
-    # $RE{net}{IPv6}
-    # $RE{net}{IPv4}
-
-    croak "Invalid IP: ".$self->{_ip}.""
-	unless ( $self->{_ip} =~ m/$RE{net}{IPv4}/ );
-
-    croak "Invalid Port: ".$self->{_port}.""
-	unless ( PORT_MAX > $self->{_port} && $self->{_port} < PORT_MAX );
-
-    croak "Invalid host syntax: "
-	.$self->{_host}.", sample: http://"
-	.$self->{_ip}.":"
-	.$self->{_port}."."
+    croak "Invalid host syntax: sample 'http://<host>:<port>' "
 	unless ( $self->{_host} =~ /^http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\:\d{1,5}$/ );
 }
 
@@ -61,9 +45,11 @@ sub getSnippets {
     # Simple GET request for testing purposes
     $self->{_client}->GET('/snippets/');
     if (index($self->{_client}->responseContent(), "Can\'t connect to") != -1) {
+	my @array = split /[http:\/\/]/, $self->{_host};
+	@array = grep { $_ ne '' } @array;
 	croak "Server is unavailable at IP: "
-	    .$self->{_ip}." and Port: "
-	    .$self->{_port}.".";
+	    .$array[0]." and Port: "
+	    .$array[1];
     }
     return decode_json $self->{_client}->responseContent();
 }

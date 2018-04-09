@@ -63,18 +63,35 @@ sub getSnippets {
 }
 
 sub postSnippets {
-    my ( $self, $url, $hashRef, $username, $password ) = @_;
-    my $headers = { Accept => 'application/json',
-		    Authorization => 'Basic ' . encode_base64($username . ':' . $password) };
-    # Simple GET request for testing purposes
-    $self->{_client}->POST($url,
-			   $hashRef,
-			   {'Content-type' => 'application/x-www-form-urlencoded'},
-			   $headers);
-    if ($self->{_client}->responseCode() == '200') {
-	return "POST" . $url . " OK " . $self->{_client}->responseContent();
+    my ( $self, %options ) = @_;
+
+    # print Dumper \%options;
+
+=test
+    if (not defined $options{hashRef} && not defined $options{file}) {
+	    croak "Please insert 1 a file e.g. 'sample.txt' or a \$options{hashRef}"
     }
-    return $url . " " . $self->{_client}->responseContent();
+    elsif (defined $options{hashRef} && defined $options{file}){
+	croak "Please insert a file e.g. 'sample.txt' or a \$hashRef"
+    }
+=cut
+    my $headers = { "Content-type" => 'application/json; charset=UTF-8',
+		    "Authorization" => 'Basic ' .
+			encode_base64($options{username} . ':' . $options{password}) };
+
+    # Simple POST request for testing purposes
+    if (defined $options{hashRef}) {
+	$self->{_client}->POST( $options{url},
+				encode_json($options{hashRef}),
+				$options{headers} );
+    }
+    elsif (defined $options{file}) {
+	$headers->{"Content"} = ["file" => [ $options{file} ] ];
+	print Dumper $headers;
+	$self->{_client}->POST( $options{url},
+				$headers );
+    }
+    return decode_json $self->{_client}->responseContent();
 }
 
 sub deleteSnippets {

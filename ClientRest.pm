@@ -6,20 +6,13 @@ use strict;
 use warnings;
 use MIME::Base64;
 use Data::Dumper;
-use feature 'say';
 
 use version;
 
 our $VERSION;
 $VERSION = qv('0.0.1');
 
-use JSON;
 use REST::Client;
-
-use constant {
-    PORT_MIN   => 1,
-    PORT_MAX   => 65535,
-};
 
 sub new {
     my $class = shift;
@@ -76,11 +69,12 @@ sub postSnippets {
 
 sub postSnippetsFile {
     my ( $self, %options ) = @_;
-    my $headers = { "file" => $options{file},
-		    "Content-type" => 'multipart/form-data',
-		    "Authorization" => 'Basic ' .
-			encode_base64($options{username} . ':' . $options{password}) };
+    my $headers = { "Content-type" => 'multipart/form-data',
+		    # "Content" => [ 'file' => [$options{file}]],
+		    "Authorization" => 'Basic '.
+			encode_base64($options{username} . ':' . $options{password}), };
     $self->{_client}->POST( $options{url},
+			    encode_json({file => $options{file}}),
 			    $headers );
     return $self->{_client}->responseContent();
 }

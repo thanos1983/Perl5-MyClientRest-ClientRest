@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use MIME::Base64;
 use Data::Dumper;
+use feature 'say';
 
 use version;
 
@@ -64,34 +65,24 @@ sub getSnippets {
 
 sub postSnippets {
     my ( $self, %options ) = @_;
-
-    # print Dumper \%options;
-
-=test
-    if (not defined $options{hashRef} && not defined $options{file}) {
-	    croak "Please insert 1 a file e.g. 'sample.txt' or a \$options{hashRef}"
-    }
-    elsif (defined $options{hashRef} && defined $options{file}){
-	croak "Please insert a file e.g. 'sample.txt' or a \$hashRef"
-    }
-=cut
     my $headers = { "Content-type" => 'application/json; charset=UTF-8',
 		    "Authorization" => 'Basic ' .
 			encode_base64($options{username} . ':' . $options{password}) };
-
-    # Simple POST request for testing purposes
-    if (defined $options{hashRef}) {
-	$self->{_client}->POST( $options{url},
-				encode_json($options{hashRef}),
-				$options{headers} );
-    }
-    elsif (defined $options{file}) {
-	$headers->{"Content"} = ["file" => [ $options{file} ] ];
-	print Dumper $headers;
-	$self->{_client}->POST( $options{url},
-				$headers );
-    }
+    $self->{_client}->POST( $options{url},
+			    encode_json($options{hashRef}),
+			    $headers );
     return decode_json $self->{_client}->responseContent();
+}
+
+sub postSnippetsFile {
+    my ( $self, %options ) = @_;
+    my $headers = { "file" => $options{file},
+		    "Content-type" => 'multipart/form-data',
+		    "Authorization" => 'Basic ' .
+			encode_base64($options{username} . ':' . $options{password}) };
+    $self->{_client}->POST( $options{url},
+			    $headers );
+    return $self->{_client}->responseContent();
 }
 
 sub deleteSnippets {
@@ -105,7 +96,5 @@ sub deleteSnippets {
     }
     return $url . " " . $self->{_client}->responseContent();
 }
-
-# Module further implementation here
 
 1;

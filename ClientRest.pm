@@ -49,7 +49,7 @@ sub getSnippets {
 	    .$array[1];
     }
 
-    return decode_json $self->{_client}->responseContent();
+    return decode_json($self->{_client}->responseContent());
 }
 
 sub postSnippets {
@@ -64,7 +64,22 @@ sub postSnippets {
 			    encode_json($options{hashRef}),
 			    $headers );
 
-    return decode_json $self->{_client}->responseContent();
+    return decode_json($self->{_client}->responseContent());
+}
+
+sub putSnippets {
+    my ( $self, %options ) = @_;
+
+    my $headers = { "Content-type" => 'application/json; charset=UTF-8',
+		    "Authorization" => 'Basic '.
+			encode_base64($options{username}.':'.
+				      $options{password}) };
+
+    $self->{_client}->PUT( $options{url},
+			    encode_json($options{hashRef}),
+			    $headers );
+
+    return decode_json($self->{_client}->responseContent());
 }
 
 sub postSnippetsFile {

@@ -9,12 +9,13 @@ Sample of list of files in repo:
 
 $ ls -la
 total 56
-drwxrwxr-x 3 tinyos tinyos  4096 Apr  4 19:23 .
-drwxrwxr-x 3 tinyos tinyos  4096 Apr  4 19:23 ..
--rw-rw-r-- 1 tinyos tinyos  1578 Apr  4 19:23 ClientRest.pm
-drwxrwxr-x 8 tinyos tinyos  4096 Apr  4 19:23 .git
--rw-rw-r-- 1 tinyos tinyos 35147 Apr  4 19:23 LICENSE
--rw-rw-r-- 1 tinyos tinyos   128 Apr  4 19:23 README.md
+drwxrwxr-x  3 user user  4096 Apr 11 20:13 .
+drwxrwxr-x 14 user user  4096 Apr 11 20:13 ..
+-rw-rw-r--  1 user user  2672 Apr 11 20:03 ClientRest.pm
+-rw-rw-r--  1 user user     0 Apr  4 18:03 ClientRest.pm~
+drwxrwxr-x  9 user user  4096 Apr 11 20:04 .git
+-rw-rw-r--  1 user user 35147 Apr  4 19:20 LICENSE
+-rw-rw-r--  1 user user  1190 Apr 11 20:13 README.md
 
 Sample of path (pwd in dir) /home/user/path/MyClientRest
 
@@ -32,14 +33,45 @@ use warnings;
 use Data::Dumper;
 use MyClientRest::ClientRest;
 
-my $ip = '127.0.0.1';
-my $port = '8000';
-my $host = "http://$ip:$port";
+my $host = "http://127.0.0.1:8000";
+
+# my $host = "https://thanos-test.herokuapp.com/";
 
 # instatiate class
-my $object = new ClientRest( $host,
-			     $port,
-			     $ip );
+my $object = new ClientRest( $host );
 
-my $data = $object->getSnippets();
-print Dumper $data;
+my $username = "admin";
+my $password = "password123";
+my $url = "/snippets/";
+my $snippets = $object->getSnippets( $url, $username, $password );
+print Dumper $snippets;
+
+my $hashRef = { "title" => "Test Title",
+		"code" => "print \"Test POST Request\"",
+		"linenos" => "false",
+		"language" => "perl",
+		"character" => "\x{00AE}",
+		"style" => "emacs" };
+
+my %options = ( "url"      => $url,
+		"hashRef"  => $hashRef,
+		"username" => $username,
+		"password" => $password );
+
+# my $post = $object->postSnippets( %options );
+# print Dumper $post;
+
+my $file = 'Sample.txt';
+my $upload = '/upload/';
+my %optionsFile = ( "url"      => $upload,
+		    "file"     => $file,
+		    "username" => $username,
+		    "password" => $password );
+
+# my $postFile = $object->postSnippetsFile( %optionsFile );
+# print Dumper $postFile;
+
+__END__
+my $urlDelete = "/snippets/38/";
+my $delete = $object->deleteSnippets( $urlDelete, $username, $password);
+print Dumper $delete;

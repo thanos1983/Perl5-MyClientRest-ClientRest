@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use MIME::Base64;
 use Data::Dumper;
+use HTTP::Request::Common;
 
 use version;
 
@@ -58,31 +59,51 @@ sub getSnippets {
 
 sub postSnippets {
     my ( $self, %options ) = @_;
+
     my $headers = { "Content-type" => 'application/json; charset=UTF-8',
-		    "Authorization" => 'Basic ' .
-			encode_base64($options{username} . ':' . $options{password}) };
+		    "Authorization" => 'Basic '.
+			encode_base64($options{username}.':'.
+				      $options{password}) };
+
     $self->{_client}->POST( $options{url},
 			    encode_json($options{hashRef}),
 			    $headers );
+
     return decode_json $self->{_client}->responseContent();
 }
 
 sub postSnippetsFile {
     my ( $self, %options ) = @_;
-    my $headers = { "Content-type" => 'multipart/form-data',
-		    # "Content" => [ 'file' => [$options{file}]],
-		    "Authorization" => 'Basic '.
-			encode_base64($options{username} . ':' . $options{password}), };
+
+    my $request = HTTP::Request::Common::POST( '',
+					       'Content_Type' => 'multipart/form-data',
+					       'Content' =>
+					       [ file => [ $options{file} ] ],
+	);
+
+    $request->authorization_basic( $options{username},
+				   $options{password} );
+
+    my $headers = {
+	'Content-Type'  => $request->header('Content-Type'),
+	'Authorization' => $request->header('Authorization'),
+    };
+
+    my $body_content = $request->content;
+
     $self->{_client}->POST( $options{url},
-			    encode_json({file => $options{file}}),
+			    $body_content,
 			    $headers );
-    return $self->{_client}->responseContent();
+
+    return decode_json($self->{_client}->responseContent());
 }
 
 sub deleteSnippets {
     my ( $self, $url, $username, $password ) = @_;
     my $headers = { Accept => 'application/json',
-		    Authorization => 'Basic ' . encode_base64($username . ':' . $password) };
+		    Authorization => 'Basic '.
+			encode_base64($username .':'.
+				      $password) };
     # Simple GET request for testing purposes
     $self->{_client}->DELETE($url, $headers);
     if ($self->{_client}->responseCode() == '204') {

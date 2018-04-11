@@ -17,28 +17,16 @@ use REST::Client;
 
 sub new {
     my $class = shift;
-
     my $self = {
         _host => shift,
     };
-
-    _parameterValidation($self);
-
     # instatiate Rest::Client and create constructor
     my $client = REST::Client->new({
 	host    => $self->{_host},
 	timeout => 10, });
-
     $self->{_client} = $client;
     bless $self, $class;
-
     return $self;
-}
-
-sub _parameterValidation {
-    my( $self ) = @_;
-    croak "Invalid host syntax: sample 'http://<host>:<port>' "
-	unless ( $self->{_host} =~ /^http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\:\d{1,5}$/ );
 }
 
 sub getSnippets {

@@ -61,6 +61,14 @@ my %options = ( "url"      => $url,
 # my $post = $object->postSnippets( %options );
 # print Dumper $post;
 
+my %optionsUpdate = ( "url"      => $url . '49/',
+		      "hashRef"  => $hashRef,
+		      "username" => $username,
+		      "password" => $password );
+
+my $put = $object->putSnippets( %optionsUpdate );
+print Dumper $put;
+
 my $file = 'Sample.txt';
 my $upload = '/upload/';
 my %optionsFile = ( "url"      => $upload,

@@ -27,59 +27,59 @@ Finally create a sample perl file e.g. restClient.pl and place the sample of cod
 
 Sample of code:
 
-#!/usr/bin/perl
-use strict;
-use warnings;
-use Data::Dumper;
-use MyClientRest::ClientRest;
+	#!/usr/bin/perl
+	use strict;
+	use warnings;
+	use Data::Dumper;
+	use MyClientRest::ClientRest;
 
-my $host = "http://127.0.0.1:8000";
+	my $host = "http://127.0.0.1:8000";
 
-# my $host = "https://thanos-test.herokuapp.com/";
+	# my $host = "https://thanos-test.herokuapp.com/";
 
-# instatiate class
-my $object = new ClientRest( $host );
+	# instatiate class
+	my $object = new ClientRest( $host );
 
-my $username = "admin";
-my $password = "password123";
-my $url = "/snippets/";
-my $snippets = $object->getSnippets( $url, $username, $password );
-print Dumper $snippets;
+	my $username = "admin";
+	my $password = "password123";
+	my $url = "/snippets/";
+	my $snippets = $object->getSnippets( $url, $username, $password );
+	print Dumper $snippets;
 
-my $hashRef = { "title" => "Test Title",
-		"code" => "print \"Test POST Request\"",
-		"linenos" => "false",
-		"language" => "perl",
-		"character" => "\x{00AE}",
-		"style" => "emacs" };
+	my $hashRef = { "title" => "Test Title",
+			"code" => "print \"Test POST Request\"",
+			"linenos" => "false",
+			"language" => "perl",
+			"character" => "\x{00AE}",
+			"style" => "emacs" };
 
-my %options = ( "url"      => $url,
-		"hashRef"  => $hashRef,
-		"username" => $username,
-		"password" => $password );
+	my %options = ( "url"      => $url,
+			"hashRef"  => $hashRef,
+			"username" => $username,
+			"password" => $password );
 
-# my $post = $object->postSnippets( %options );
-# print Dumper $post;
+	# my $post = $object->postSnippets( %options );
+	# print Dumper $post;
 
-my %optionsUpdate = ( "url"      => $url . '49/',
-		      "hashRef"  => $hashRef,
-		      "username" => $username,
-		      "password" => $password );
+	my %optionsUpdate = ( "url"      => $url . '49/',
+		      	"hashRef"  => $hashRef,
+		      	"username" => $username,
+		      	"password" => $password );
 
-my $put = $object->putSnippets( %optionsUpdate );
-print Dumper $put;
+	my $put = $object->putSnippets( %optionsUpdate );
+	print Dumper $put;
 
-my $file = 'Sample.txt';
-my $upload = '/upload/';
-my %optionsFile = ( "url"      => $upload,
-		    "file"     => $file,
-		    "username" => $username,
-		    "password" => $password );
+	my $file = 'Sample.txt';
+	my $upload = '/upload/';
+	my %optionsFile = ( "url"      => $upload,
+		    	    "file"     => $file,
+		    	    "username" => $username,
+		    	    "password" => $password );
 
-# my $postFile = $object->postSnippetsFile( %optionsFile );
-# print Dumper $postFile;
+	# my $postFile = $object->postSnippetsFile( %optionsFile );
+	# print Dumper $postFile;
 
-__END__
-my $urlDelete = "/snippets/38/";
-my $delete = $object->deleteSnippets( $urlDelete, $username, $password);
-print Dumper $delete;
+	__END__
+	my $urlDelete = "/snippets/38/";
+	my $delete = $object->deleteSnippets( $urlDelete, $username, $password);
+	print Dumper $delete;

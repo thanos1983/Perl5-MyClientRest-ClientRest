@@ -62,9 +62,9 @@ Sample of code:
 	# print Dumper $post;
 
 	my %optionsUpdate = ( "url"      => $url . '49/',
-		      	"hashRef"  => $hashRef,
-		      	"username" => $username,
-		      	"password" => $password );
+		      	      "hashRef"  => $hashRef,
+		      	      "username" => $username,
+		      	      "password" => $password );
 
 	my $put = $object->putSnippets( %optionsUpdate );
 	print Dumper $put;
